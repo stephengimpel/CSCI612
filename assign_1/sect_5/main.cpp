@@ -12,82 +12,54 @@
 using namespace cv;
 using namespace std;
 
-#define IMG_HEIGHT (240)
-#define IMG_WIDTH (320)
+#define WINDOW_HEIGHT (240)
+#define WINDOW_WIDTH (320)
+
+#define ESCAPE_KEY (27)
+#define SYSTEM_ERROR (-1)
 
 const cv::Scalar YELLOW(0, 255, 255); // BGR
 
 int main(int argc, char *argv[]) {
 
-    if (argc != 3) {
-        cerr << "Usage: " << argv[0]
-             << " <input.ppm> <output.ppm>\n";
-        return 1;
+    VideoCapture cam0(0);
+    namedWindow("video_display");
+    char winInput;
+
+    if (!cam0.isOpened()) {
+        exit(SYSTEM_ERROR);
     }
 
-    string inputFile = argv[1];
-    string outputFile = argv[2];
+    cam0.set(CAP_PROP_FRAME_WIDTH, WINDOW_WIDTH);
+    cam0.set(CAP_PROP_FRAME_HEIGHT, WINDOW_HEIGHT);
 
-    Mat original = imread(inputFile);
+    while (1) {
+        Mat frame;
 
-    if (original.empty()) {
-        cerr << "File not found: " << argv[1];
-        return 1;
+        cam0.read(frame);
+        // Cross hairs
+        line(
+            frame,
+            Point(0, WINDOW_HEIGHT / 2),
+            Point(WINDOW_WIDTH, WINDOW_HEIGHT / 2),
+            YELLOW,
+            1
+        );
+        line(
+            frame,
+            Point(WINDOW_WIDTH / 2, 0),
+            Point(WINDOW_WIDTH / 2, WINDOW_HEIGHT),
+            YELLOW,
+            1
+        );
+        imshow("video_display", frame);
+
+        if ((winInput = waitKey(1)) == ESCAPE_KEY) {
+            break;
+        } else if (winInput == 'n') {
+            cout << "input " << winInput << " ignored" << endl;
+        }
     }
 
-    Mat output = original.clone();
-
-    // // Top Line
-    line(
-        output,
-        Point(0, 0),
-        Point(IMG_WIDTH, 0),
-        YELLOW,
-        3
-    );
-
-    // Bottom Line
-    line(
-        output,
-        Point(0, IMG_HEIGHT - 1),
-        Point(IMG_WIDTH, IMG_HEIGHT - 1),
-        YELLOW,
-        3
-    );
-
-    // // Left Line
-    line(
-        output,
-        Point(0, 0),
-        Point(0, IMG_HEIGHT),
-        YELLOW,
-        3
-    );
-
-    // Right Line
-    line(
-        output,
-        Point(IMG_WIDTH - 1, 0),
-        Point(IMG_WIDTH - 1, IMG_HEIGHT),
-        YELLOW,
-        3
-    );
-
-    // Diagonals
-    line(
-        output,
-        Point(0, 0),
-        Point(IMG_WIDTH, IMG_HEIGHT),
-        YELLOW,
-        3
-    );
-    line(
-        output,
-        Point(IMG_WIDTH, 0),
-        Point(0, IMG_HEIGHT),
-        YELLOW,
-        3
-    );
-
-    imwrite(outputFile, output);
+    destroyWindow("video_display");
 }
