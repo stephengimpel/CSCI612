@@ -24,6 +24,9 @@ distclean:
 capture: ${OBJS}
 	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $@.o $(LIBS)
 
+simple-capture:
+	g++ simplier_capture.cpp -o simplier_capture `pkg-config --cflags --libs opencv4`
+
 depend:
 
 .c.o:

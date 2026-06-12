@@ -6,6 +6,8 @@
 *.mp4
 **/example_images/
 *.o
+*.xz
+*.tar
 
 # Created by https://gitignore.org
 # C++.gitignore
