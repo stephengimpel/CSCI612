@@ -24,6 +24,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -47,6 +48,12 @@ int main() {
     cam0.set(CAP_PROP_FRAME_WIDTH, 640);
     cam0.set(CAP_PROP_FRAME_HEIGHT, 480);
 
+    struct timespec start, end;
+
+    clock_gettime(CLOCK_MONOTONIC, &start);
+
+    int frame_count = 0;
+
     while (1) {
         Mat frame;
 
@@ -61,7 +68,19 @@ int main() {
         } else if (winInput == 'n') {
             cout << "input " << winInput << " ignored" << endl;
         }
+
+        frame_count++;
     }
+
+    clock_gettime(CLOCK_MONOTONIC, &end);
+
+    double elapsed =
+        (end.tv_sec - start.tv_sec) +
+        (end.tv_nsec - start.tv_nsec) / 1e9;
+
+    double fps = frame_count / elapsed;
+
+    std::cout << "FPS: " << fps << std::endl;
 
     destroyWindow("video_display");
 };
