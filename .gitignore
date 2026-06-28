@@ -79,3 +79,5 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+
+driving-set-1-videos/
